@@ -4,7 +4,7 @@ import Step1_RepTypeSelection from './components/steps/Step1_RepTypeSelection';
 import Step2_TypeSelection from './components/steps/Step2_TypeSelection';
 import Step2b_Details from './components/steps/Step2b_Details';
 import Step3_NormalRepConfig from './components/steps/Step3_NormalRepConfig';
-import Step3b_AddWatchItems from './components/steps/Step3b_AddWatchItems';
+import Step3b_AddContentItems from './components/steps/Step3b_AddContentItems';
 import Breadcrumb from './components/ui/Breadcrumb';
 
 export default function App() {
@@ -20,9 +20,9 @@ export default function App() {
   };
 
   const handleSelectRepType = (repType) => {
-    if (repType === 'watch') {
+    if (repType === 'Content') {
       setNewItemConfig({
-        repType: 'watch',
+        repType: 'Content',
         name: '',
         displayName: '',
         externalId: '',
@@ -86,9 +86,9 @@ export default function App() {
         autoCoachConfig: ''
       }));
       updateStep('step3_normalRep', 3);
-    } else if (repType === 'watch') {
+    } else if (repType === 'Content') {
       setNewItemConfig(prev => ({ ...prev, items: [] }));
-      updateStep('step3_addWatchItems', 3);
+      updateStep('step3_addContentItems', 3);
     } else {
       const newItems = newItemConfig.type.map(t => ({
         repType: newItemConfig.repType,
@@ -111,7 +111,7 @@ export default function App() {
     }
   };
 
-  const handleAddWatchItem = (itemType) => {
+  const handleAddContentItem = (itemType) => {
     const newItem = { type: itemType, id: Date.now() };
     setNewItemConfig(prev => ({
       ...prev,
@@ -119,7 +119,7 @@ export default function App() {
     }));
   };
 
-  const handleFinishWatchItems = () => {
+  const handleFinishContentItems = () => {
     if (editingIndex !== null) {
       const updatedFlowItems = [...flowItems];
       updatedFlowItems[editingIndex] = newItemConfig;
@@ -158,12 +158,16 @@ export default function App() {
     // Determine the correct starting step based on the item type
     if (itemToEdit.repType === 'Practice') {
       updateStep('step3_normalRep', 3);
-    } else if (itemToEdit.repType === 'watch') {
-      updateStep('step3_addWatchItems', 3);
+    } else if (itemToEdit.repType === 'Content') {
+      updateStep('step3_addContentItems', 3);
     } else {
       updateStep('step2_details', 2);
     }
   };
+  const handleRemoveItem = (index) => {
+    setFlowItems(prev => prev.filter((_, i) => i !== index));
+  };
+
 
   const renderItemDetails = (item) => {
     const details = [];
@@ -173,7 +177,7 @@ export default function App() {
       details.push(item.coached ? 'Coached' : 'Not Coached');
       if (item.keywords) details.push(`Keywords: ${item.keywords}`);
       if (item.autoCoachConfig) details.push(`Auto-Coach: ${item.autoCoachConfig.substring(0, 30)}...`);
-    } else if (item.repType === 'watch' && item.items) {
+    } else if (item.repType === 'Content' && item.items) {
       details.push(`Contains: ${item.items.map(i => i.type).join(', ')}`);
     } else {
       details.push(`Rep Type: ${item.repType}`);
@@ -187,10 +191,10 @@ export default function App() {
 
     const steps = [
       { id: 'step1_repType', name: 'Rep Type' },
-      ...(repType !== 'watch' ? [{ id: 'step2_type', name: 'Content Type' }] : []),
+      ...(repType !== 'Content' ? [{ id: 'step2_type', name: 'Content Type' }] : []),
       { id: 'step2_details', name: 'Details' },
       ...(repType === 'Practice' ? [{ id: 'step3_normalRep', name: 'Configuration' }] : []),
-      ...(repType === 'watch' ? [{ id: 'step3_addWatchItems', name: 'Add Items' }] : []),
+      ...(repType === 'Content' ? [{ id: 'step3_addContentItems', name: 'Add Items' }] : []),
     ];
 
     const wizardLayout = (stepContent) => (
@@ -209,11 +213,11 @@ export default function App() {
         return wizardLayout(<Step2b_Details newItemConfig={newItemConfig} onConfigChange={handleConfigChange} onSave={handleSaveDetails} onCancel={handleCancelAdd} />);
       case 'step3_normalRep':
         return wizardLayout(<Step3_NormalRepConfig newItemConfig={newItemConfig} onConfigChange={handleConfigChange} onSave={handleSaveNormalRep} onCancel={handleCancelAdd} />);
-      case 'step3_addWatchItems':
-        return wizardLayout(<Step3b_AddWatchItems newItemConfig={newItemConfig} onAddItem={handleAddWatchItem} onFinish={handleFinishWatchItems} onCancel={handleCancelAdd} />);
+      case 'step3_addContentItems':
+        return wizardLayout(<Step3b_AddContentItems newItemConfig={newItemConfig} onAddItem={handleAddContentItem} onFinish={handleFinishContentItems} onCancel={handleCancelAdd} />);
       case 'main':
       default:
-        return <MainScreen flowItems={flowItems} onStartAdd={handleStartAdd} onEditItem={handleEditItem} renderItemDetails={renderItemDetails} />;
+        return <MainScreen flowItems={flowItems} onStartAdd={handleStartAdd} onEditItem={handleEditItem} onRemoveItem={handleRemoveItem} renderItemDetails={renderItemDetails} />;
     }
   };
 

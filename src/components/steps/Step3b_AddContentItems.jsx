@@ -3,8 +3,8 @@ import { ClipboardCheck, HelpCircle, Video, FileText } from 'lucide-react';
 import WizardCard from '../ui/WizardCard';
 import SelectionButton from '../ui/SelectionButton';
 
-const Step3b_AddWatchItems = ({ newItemConfig, onAddItem, onFinish, onCancel }) => {
-  const watchItemTypes = [
+const Step3b_AddContentItems = ({ newItemConfig, onAddItem, onFinish, onCancel }) => {
+  const ContentItemTypes = [
     { id: 'linkout', icon: ClipboardCheck, label: 'Link Out' },
     { id: 'flashcard', icon: HelpCircle, label: 'Flash Card' },
     { id: 'video', icon: Video, label: 'Video' },
@@ -17,7 +17,7 @@ const Step3b_AddWatchItems = ({ newItemConfig, onAddItem, onFinish, onCancel }) 
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Content</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {watchItemTypes.map(item => (
+          {ContentItemTypes.map(item => (
             <SelectionButton
               key={item.id}
               icon={item.icon}
@@ -60,4 +60,4 @@ const Step3b_AddWatchItems = ({ newItemConfig, onAddItem, onFinish, onCancel }) 
   );
 };
 
-export default Step3b_AddWatchItems;
+export default Step3b_AddContentItems;
